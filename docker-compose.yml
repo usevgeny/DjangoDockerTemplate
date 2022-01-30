@@ -1,0 +1,25 @@
+version: "3"
+services:
+  mysite:
+    build:
+      context: .
+      dockerfile: ./mysite/Dockerfile
+    volumes:
+      - ./mysite:/home/app
+      - ./apache/ports.conf:/etc/apache2/ports.conf
+      - ./ssls/letsencrypt/live/mysite:/home/ssl
+    entrypoint: ["/wait.sh"]
+    depends_on: #links:
+      - mysite_db
+    ports:
+      - "80:80"
+      - "443:443"
+    restart:  always
+  mysite_db:
+    image: postgres
+    volumes:
+      - ./mysite/mysite_db/data_mysite/db:/var/lib/postgresql/data
+    command: -p 5233
+    env_file:
+      - ./mysite/.env
+    restart:  always

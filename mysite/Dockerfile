@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libpq-dev
 
 # Requirements are installed here to ensure they will be cached.
-COPY ./portfolio/requirements_postgres.txt ./home/
+COPY ./mysite/requirements.txt ./home/
 
 # Create Python Dependency and Sub-Dependency Wheels.
 RUN pip wheel --wheel-dir /usr/src/app/wheels  \
-  -r /home/requirements_postgres.txt
+  -r /home/requirements.txt
 
 
 # Python 'run' stage
@@ -58,14 +58,14 @@ RUN mkdir -p /home/logs/
 RUN mkdir -p /home/ssl/
 #COPY ./app /home/app
 
-COPY ./portfolio/wait.sh /wait.sh
+COPY ./mysite/wait.sh /wait.sh
 RUN chmod +x /wait.sh
 
 #preparing apache2
 
-COPY ./apache_portfolio/appli.conf /etc/apache2/sites-available/000-default.conf
-COPY ./apache_portfolio/apache2.conf /etc/apache2/apache2.conf
-RUN  ln -s /home/app/portfolio/wsgi.py /var/www/app
+COPY ./apache/appli.conf /etc/apache2/sites-available/000-default.conf
+COPY ./apache/apache2.conf /etc/apache2/apache2.conf
+RUN  ln -s /home/app/mysite/wsgi.py /var/www/app
 RUN a2enmod rewrite
 RUN a2enmod ssl
 EXPOSE 80
